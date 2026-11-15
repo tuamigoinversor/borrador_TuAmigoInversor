@@ -1,0 +1,61 @@
+TU AMIGO INVERSOR · V55 (15 de noviembre de 2026) — versión cerrada
+
+CÓMO SE GENERA
+  Toda la web sale de un solo programa:   python3 tools/build.py
+  Necesita:  pip install markdown pyyaml
+  No edites los index.html a mano: se pisan al generar.
+
+RITMO
+  Día 1         informe por correo a los suscriptores (cartera del mes + resultado del mes anterior).
+  Día 10 al 15  actualizas la web: mes cerrado con datos definitivos + cartera del mes en curso.
+
+QUÉ TOCAR CADA MES (y nada más)
+  1. datos/series.json   añade al final de "r" de cada estrategia la rentabilidad del mes cerrado (%, euros).
+                         Si el dato definitivo del mes anterior no coincide con el que enviaste, corrígelo.
+                         OJO con GEN-Z y CRYPTO: tienen "nueva": {"start": ..., "r": []}.
+                           GEN-Z   noviembre de 2026 en adelante va en "nueva" (su "r" se queda en octubre).
+                           CRYPTO  noviembre de 2026 todavía va en "r"; diciembre de 2026 en adelante, en "nueva".
+                         Si te equivocas de sitio, el programa se para y te lo dice.
+  2. datos/pos.json      añade el mes nuevo en "labels" de GEDA, HORIZONTE, GEN-Z y CRYPTO y ajusta los tramos:
+                         [bloque, ticker, mes_inicio, mes_fin] (los meses se cuentan desde 0 = primer mes de la serie).
+                         CRYPTO desde diciembre de 2026 ya no rota: no hace falta añadirle meses.
+  3. datos/informes.json añade "2026-12": "/informes/tuamigoinversor-informe-2026-12.pdf", copia el PDF en /informes/
+                         y, si quieres portada, una imagen en assets/img/informes/informe-2026-12.webp (720 px de ancho).
+  4. python3 tools/build.py  y subes la carpeta.
+  Las fechas («datos a…», «ene–oct», «cartera de noviembre»…) salen solas. No hay que tocar build.py.
+
+SOLO SI CAMBIA ALGO DE FONDO
+  tools/build.py        lista CAMBIOS (cambios de método, con fecha)
+  datos/content.json    reglas, límites e importes de cada ficha
+  datos/paginas/*.html  sobre mí, metodología y legales
+  articulos/*.md        artículos del blog
+
+QUÉ HA CAMBIADO EN V55 RESPECTO A V54
+  + Datos a 31 de octubre de 2026 en las seis estrategias; carteras de octubre y de noviembre.
+  + Septiembre con datos definitivos: ROCA −0,76 (antes −1,06), IMPULSO −2,76 (−2,88), GEDA +7,56 (+7,65),
+    CRYPTO +21,29 (+20,52). Anotado en metodología.
+  ! HORIZONTE, octubre: la web lleva −0,96 % (serie recalculada con los valores liquidativos diarios, la misma
+    cifra que da tu seguimiento diario). El informe del 1 de noviembre decía +1,69 %. COMPRUÉBALO con el valor
+    liquidativo del plan a 30-sep y 31-oct. Si el bueno es +1,69, cambia el último número de HORIZONTE en
+    datos/series.json y la frase de CAMBIOS que lo cita (busca «−0,96» en tools/build.py).
+  + La web pasa de trimestral a mensual (entre el 10 y el 15): portada, fichas, registro, suscripción,
+    metodología, informes y «cómo elaboro los informes».
+  + Fuera /seguimiento/ (redirige a /registro/). Ya no se lee datos/diario/. Quita del repositorio privado
+    el paso que empuja geda.json a este repositorio: ya no sirve y republica la web cada mañana sin motivo.
+  + GEDA: el cambio de método explica que el punto débil de la revisión era la lista de acciones y que ahora
+    sale de una regla automática. La comparación con la regla (+67 %) queda fechada a cierre de septiembre
+    frente al +100,1 % publicado (antes +100,2 %, por el dato definitivo de septiembre).
+  + GEN-Z: universo automático y máximo dos por tema. Su historial queda partido: versión anterior hasta
+    octubre de 2026 y versión nueva desde noviembre, en tabla aparte dentro de la ficha (series.json > "nueva").
+  + CRYPTO: preparado igual para diciembre de 2026 (50 % BTC + 50 % ETH).
+  + HORIZONTE: regla MACD y serie con los traspasos desde enero de 2020, presentada como operativa real.
+  + Metodología: la tabla de riesgo y las fechas salen de los datos; fuera las métricas que la web no enseña
+    (Sharpe, ratio rentabilidad/caída) y la mención a backtests en las fichas; nueva sección «Cuándo se
+    actualiza cada cosa».
+  + Informe del 1 de noviembre de 2026 añadido a /informes/.
+
+PENDIENTE TUYO
+  1. Aviso legal: falta NIF y domicilio (LSSI art. 10). Revisar con el abogado.
+  2. datos/informes.json: enlaces de julio de 2025 a junio de 2026.
+  3. Comprobar el dato de octubre de HORIZONTE (ver arriba).
+  4. Si el CNAME está en el repositorio, consérvalo.
