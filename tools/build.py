@@ -201,6 +201,12 @@ REG_HEAD = '<thead><tr><th>Mes</th><th>Cambio el día 1</th><th class="n">Result
 # ---------- plantilla ----------
 NAV = [('/inversion-tactica-geda/', 'GEDA'), ('/comparador/', 'Las carteras'), ('/registro/', 'Registro'), ('/como-seguirlo/', 'Cómo seguirlo'), ('/blog/', 'Blog'), ('/sobre-mi/', 'Sobre mí')]
 SITEMAP = []
+def relativas(h, path):
+    """Convierte los enlaces internos (/assets/..., /registro/...) en relativos a la página, para que la web
+    funcione igual en tuamigoinversor.com que en una dirección de pruebas con subcarpeta (usuario.github.io/repo/)."""
+    d = path.strip('/'); pre = '../' * (len(d.split('/')) if d else 0) or './'
+    h = re.sub(r'(href|src)="/(?!/)', lambda m: f'{m.group(1)}="{pre}', h)
+    return re.sub(r'(content="0; url=)/(?!/)', lambda m: m.group(1) + pre, h)
 def page(path, title, desc, body, index=True, og='/assets/img/og-tuamigoinversor.jpg', kind='website'):
     url = BASE + path
     nav = ''.join(f'<a href="{u}"{" aria-current=\"page\"" if u == path else ""}>{t}</a>' for u, t in NAV)
@@ -241,13 +247,13 @@ def page(path, title, desc, body, index=True, og='/assets/img/og-tuamigoinversor
 </html>
 '''
     d = path.strip('/'); os.makedirs(d, exist_ok=True) if d else None
-    open(os.path.join(d, 'index.html') if not path.endswith('.html') else d, 'w').write(h)
+    open(os.path.join(d, 'index.html') if not path.endswith('.html') else d, 'w').write(relativas(h, path))
     if index: SITEMAP.append(path)
 
 def redirect(path, to):
     d = path.strip('/'); os.makedirs(d, exist_ok=True)
     full = to if to.startswith('http') else BASE + to
-    open(d + '/index.html', 'w').write(f'<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Página trasladada</title><meta name="robots" content="noindex"><link rel="canonical" href="{full}"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>Esta página ya no existe. <a href="{to}">Sigue por aquí</a>.</p></body></html>')
+    open(d + '/index.html', 'w').write(relativas(f'<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Página trasladada</title><meta name="robots" content="noindex"><link rel="canonical" href="{full}"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>Esta página ya no existe. <a href="{to}">Sigue por aquí</a>.</p></body></html>', path))
 
 def suscripcion(h='Recibe el informe el día 1'):
     return f'''<section class="band" id="suscribirme"><div class="wrap g2">
@@ -513,7 +519,7 @@ prosa('/recomendaciones/', 'recomendaciones.html', 'Cómo elaboro los informes y
 prosa('/aviso-legal/', 'aviso-legal.html', 'Aviso legal | Tu Amigo Inversor', 'Titular de la web y condiciones de uso de tuamigoinversor.com.')
 prosa('/privacidad/', 'privacidad.html', 'Privacidad y cookies | Tu Amigo Inversor', 'Qué datos recojo, para qué y qué derechos tienes.')
 for old, new in {**MUERTAS, '/aprende/': '/blog/', '/aprende/brokers/': '/blog/', '/aprende/brokers/cuenta-financia-europa/': '/aprende/cuenta-financia-europa/', '/informe-ejemplo/': '/informes/', '/seguimiento/': '/registro/'}.items(): redirect(old, new)
-open('404.html', 'w').write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>No encontrada | Tu Amigo Inversor</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/assets/css/site.css"></head><body><main><section class="hero"><div class="wrap"><span class="eyebrow">Error 404</span><h1>Esta página no existe</h1><p class="lead">Puede que la haya movido al rehacer la web.</p><div class="cta"><a class="btn" href="/">Ir al inicio</a><a class="btn g" href="/registro/">Ver el registro</a></div></div></section></main></body></html>')
+open('404.html', 'w').write('<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>No encontrada | Tu Amigo Inversor</title><meta name="robots" content="noindex"><link rel="stylesheet" href="' + BASE + '/assets/css/site.css"></head><body><main><section class="hero"><div class="wrap"><span class="eyebrow">Error 404</span><h1>Esta página no existe</h1><p class="lead">Puede que la haya movido al rehacer la web.</p><div class="cta"><a class="btn" href="' + BASE + '/">Ir al inicio</a><a class="btn g" href="' + BASE + '/registro/">Ver el registro</a></div></div></section></main></body></html>')
 hoy = datetime.date.today().isoformat()
 open('sitemap.xml', 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'<url><loc>{BASE}{p}</loc><lastmod>{hoy}</lastmod></url>\n' for p in SITEMAP) + '</urlset>\n')
 print('Páginas:', len(SITEMAP), '· artículos:', len(ARTS))

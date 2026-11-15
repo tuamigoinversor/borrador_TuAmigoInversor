@@ -1,9 +1,16 @@
-TU AMIGO INVERSOR · V55 (15 de noviembre de 2026) — versión cerrada
+TU AMIGO INVERSOR · V56 (15 de noviembre de 2026) — versión cerrada
 
 CÓMO SE GENERA
   Toda la web sale de un solo programa:   python3 tools/build.py
   Necesita:  pip install markdown pyyaml
   No edites los index.html a mano: se pisan al generar.
+
+CÓMO VERLA ANTES DE PUBLICARLA
+  Desde la v56 todos los enlaces internos son relativos: la web se ve igual en tuamigoinversor.com que en una
+  dirección de pruebas con subcarpeta (usuario.github.io/nombre-del-repo/). La v55 solo funcionaba en la raíz
+  de un dominio y en una dirección de pruebas salía sin estilos.
+  En tu ordenador: doble clic en ver_web.bat (abre http://localhost:8000/). Con doble clic en index.html la
+  portada ya se ve con su estilo, pero los enlaces abren carpetas en vez de páginas.
 
 RITMO
   Día 1         informe por correo a los suscriptores (cartera del mes + resultado del mes anterior).
@@ -34,10 +41,9 @@ QUÉ HA CAMBIADO EN V55 RESPECTO A V54
   + Datos a 31 de octubre de 2026 en las seis estrategias; carteras de octubre y de noviembre.
   + Septiembre con datos definitivos: ROCA −0,76 (antes −1,06), IMPULSO −2,76 (−2,88), GEDA +7,56 (+7,65),
     CRYPTO +21,29 (+20,52). Anotado en metodología.
-  ! HORIZONTE, octubre: la web lleva −0,96 % (serie recalculada con los valores liquidativos diarios, la misma
-    cifra que da tu seguimiento diario). El informe del 1 de noviembre decía +1,69 %. COMPRUÉBALO con el valor
-    liquidativo del plan a 30-sep y 31-oct. Si el bueno es +1,69, cambia el último número de HORIZONTE en
-    datos/series.json y la frase de CAMBIOS que lo cita (busca «−0,96» en tools/build.py).
+  + HORIZONTE, octubre: −0,96 % (valor liquidativo definitivo). El informe del 1 de noviembre decía +1,69 %
+    porque el plan aún no había publicado el liquidativo de cierre. Pasa cada mes: el dato de HORIZONTE del
+    informe es provisional y el bueno es el de la web. Anotado en metodología.
   + La web pasa de trimestral a mensual (entre el 10 y el 15): portada, fichas, registro, suscripción,
     metodología, informes y «cómo elaboro los informes».
   + Fuera /seguimiento/ (redirige a /registro/). Ya no se lee datos/diario/. Quita del repositorio privado
@@ -57,5 +63,4 @@ QUÉ HA CAMBIADO EN V55 RESPECTO A V54
 PENDIENTE TUYO
   1. Aviso legal: falta NIF y domicilio (LSSI art. 10). Revisar con el abogado.
   2. datos/informes.json: enlaces de julio de 2025 a junio de 2026.
-  3. Comprobar el dato de octubre de HORIZONTE (ver arriba).
-  4. Si el CNAME está en el repositorio, consérvalo.
+  3. Si el CNAME está en el repositorio, consérvalo.
