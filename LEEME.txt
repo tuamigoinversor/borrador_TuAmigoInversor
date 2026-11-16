@@ -1,8 +1,40 @@
-TU AMIGO INVERSOR · V56 (15 de noviembre de 2026) — versión cerrada
+TU AMIGO INVERSOR · V58 (16 de noviembre de 2026)
+
+QUÉ HA CAMBIADO EN V58 RESPECTO A V57
+  + Grupos por un hecho: «Más de 5 años con dinero real» (ROCA, IMPULSO, HORIZONTE, GEDA) y «Menos de 5 años con
+    dinero real» (GEN-Z, CRYPTO). Fuera «consolidada», «aún no la doy por probada» y «método congelado».
+    «En fase de lanzamiento» sigue siendo el nombre de la familia de GEN-Z y CRYPTO. La comparación con el ensayo
+    de un medicamento queda una sola vez, en /estrategias/#lanzamiento.
+  + Fichas: insignia «Regla revisada en …» enlazada a sus cambios de método (GEDA, HORIZONTE, GEN-Z, CRYPTO).
+  + CRYPTO: mientras la cartera publicada sea de antes de diciembre de 2026, la ficha enseña la cartera real del mes
+    (30 % BTC, 30 % ETH y las tres altcoins de pos.json) y los textos cortos dicen «desde diciembre de 2026».
+    Al pasar la web a diciembre, cambia sola a 50/50. Sus rotaciones 2023–nov 2026 quedan archivadas en su ficha.
+  + Registro: sin CRYPTO, con una línea que dice dónde están sus rotaciones archivadas.
+  + Portada: el móvil dice «Mis cambios del mes» con SALE / ENTRA / SIN CAMBIOS, todas las posiciones y HORIZONTE.
+    En pantallas de menos de 800 px no se enseña (la tarjeta azul ya dice lo mismo).
+  + Menú «Cómo funciona» sin duplicados: metodología, cómo elaboro los informes y qué hago el día 1.
+  + Botón del menú móvil con texto blanco. Tarjeta de reserva 3:2 para artículos sin imagen.
+  + Nueva entrada en cambios de método: «Las seis estrategias, en tres familias».
+
+QUÉ HA CAMBIADO EN V57 RESPECTO A V56
+  + Aspecto de la v48: tipografías Bricolage Grotesque + IBM Plex, cobalto y naranja, banda azul en la portada,
+    imágenes de cada estrategia (tarjetas y portadas de ficha). Estructura de portada de la v48 con el contenido de la v56.
+  + Se habla siempre de SEIS estrategias. En las tablas: 4 «consolidadas» (más de 5 años con dinero real: ROCA,
+    IMPULSO, HORIZONTE, GEDA) y 2 «en fase de lanzamiento» (primeros años con dinero real: GEN-Z, CRYPTO).
+  + Menú: desplegable «Estrategias» con las seis (agrupadas), «Registro», «Cómo funciona» (registro, informes,
+    metodología, cómo elaboro los informes, qué hago el día 1). En cada ficha, barra para saltar entre las seis.
+  + /laboratorio/ pasa a /estrategias/ con tres bloques: permanentes (ROCA, IMPULSO), rotación (GEDA, HORIZONTE)
+    y en fase de lanzamiento (GEN-Z, CRYPTO). /laboratorio/ redirige a /estrategias/#lanzamiento.
+  + Registro sin CRYPTO (desde diciembre ya no rota). La ficha de CRYPTO muestra su composición fija.
+  + Blog con miniatura en la lista y agrupado por temas, con filtro. Artículos relacionados al final de cada artículo.
+  + Portada: puertas «Tengo ahorros y todavía no invierto» (→ Ordena tus ahorros) / «Ya invierto», mapa de calor del
+    año con las seis estrategias, bloque «Transparencia» con registro, informes, metodología y cómo elaboro informes.
+  + Todas las tablas: positivos en verde y negativos en rojo (automático en build.py, también en los artículos).
+  + Pie de página en columnas con las tres familias, transparencia y proyecto.
 
 CÓMO SE GENERA
-  Toda la web sale de un solo programa:   python3 tools/build.py
-  Necesita:  pip install markdown pyyaml
+  Toda la web sale de un solo programa:   python tools/build.py
+  Necesita:  pip install markdown   (pyyaml es opcional: si no está, build.py lee las cabeceras de los artículos solo)
   No edites los index.html a mano: se pisan al generar.
 
 CÓMO VERLA ANTES DE PUBLICARLA
@@ -30,6 +62,8 @@ QUÉ TOCAR CADA MES (y nada más)
                          y, si quieres portada, una imagen en assets/img/informes/informe-2026-12.webp (720 px de ancho).
   4. python3 tools/build.py  y subes la carpeta.
   Las fechas («datos a…», «ene–oct», «cartera de noviembre»…) salen solas. No hay que tocar build.py.
+  También salen solas de pos.json la tarjeta azul «Qué cambió en …» y el móvil «Mis cambios del mes» de la portada,
+  y el cambio de CRYPTO a 50/50 en cuanto la cartera de GEDA llegue a diciembre de 2026.
 
 SOLO SI CAMBIA ALGO DE FONDO
   tools/build.py        lista CAMBIOS (cambios de método, con fecha)

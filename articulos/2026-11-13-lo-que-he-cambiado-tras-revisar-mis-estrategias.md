@@ -1,7 +1,7 @@
 ---
 title: "Lo que he cambiado tras revisar a fondo mis estrategias"
 fecha: 2026-11-13
-categoria: "Método"
+categoria: "Metodología"
 resumen: "Durante octubre y noviembre he revisado regla a regla las seis estrategias. GEDA y GEN-Z eligen ahora entre las acciones de los índices, sin listas hechas a mano, y CRYPTO pasa a ser 50 % bitcoin y 50 % ether. Qué cambia, por qué y qué significa si sigues alguna."
 siguiente_texto: "Ver todos los cambios de método, con fecha"
 siguiente_url: "/metodologia/#cambios"
