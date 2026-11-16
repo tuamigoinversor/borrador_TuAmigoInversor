@@ -7,7 +7,7 @@ Qué tocar cada mes (entre el 10 y el 15), y nada más:
                       GEN-Z y CRYPTO tienen además "nueva": el historial de la versión nueva del método
                       (GEN-Z desde 2026-11, CRYPTO desde 2026-12). Sus meses van ahí, NO en "r".
   datos/pos.json      añade el mes en "labels" y ajusta los tramos: [bloque, ticker, mes_inicio, mes_fin]
-  datos/informes.json enlace al informe de cada mes (PDF en /informes/); vacío = «pendiente de enlazar»
+  datos/informes.json enlace al informe de cada mes (PDF en /informes/); vacío o ausente = sin enlace («—»)
 Las fechas («datos a…», «ene–oct»…) salen solas del último mes de series.json: no hay que tocarlas.
 """
 import json, os, re, html, glob, math, datetime, calendar
@@ -79,8 +79,7 @@ CAMBIOS = [
  dict(k='GEN-Z', fecha='Noviembre de 2026', t='Las acciones candidatas pasan a salir de una regla, con dos por tema como máximo', p=[
   '<b>Qué hacía antes.</b> El universo era una lista de unas 100 empresas agrupadas por temas que elegía yo y actualizaba de vez en cuando. Incluía muchas empresas pequeñas y muy volátiles. Además, sin límite por tema, GEN-Z acabó desde julio de 2026 con las cuatro acciones en el mismo sector: cuando cayeron los semiconductores, cayeron las cuatro.',
   '<b>Qué hace ahora.</b> Solo son candidatas las acciones que forman parte de los mismos índices que GEDA, con más de tres meses dentro, y que pertenecen a uno de los temas de la estrategia: semiconductores, software y ciberseguridad, videojuegos, metales críticos, energía para la IA, salud con IA, aeroespacial y defensa, y robótica/IA y cuántica; en estos dos últimos temas, las candidatas se toman de las mayores posiciones de sus ETF de referencia. Compro las cuatro con más momentum, un 25&nbsp;% cada una, con dos del mismo tema como máximo para no concentrar toda la cartera en uno solo.',
-  '<b>El historial.</b> Este cambio es más profundo que el de GEDA. Al exigir que las empresas estén en un índice grande, salen las compañías pequeñas que protagonizaron la versión anterior. La GEN-Z actual es una estrategia distinta: las cifras de esta página, hasta octubre de 2026, son de la versión anterior y no dicen nada de la nueva. La cartera de noviembre de 2026 es la primera con la regla nueva; su historial empieza ahí y lo publico separado del anterior. Sigue siendo una estrategia muy agresiva, con caídas posibles del 30&nbsp;% o más.',
-  '<b>Anunciado y descartado.</b> En octubre anuncié aquí una versión con dos ETF temáticos y tres acciones para enero de 2027. No la voy a aplicar: los ETF temáticos que necesitaba no tienen una versión europea (UCITS) fácil de comprar. La configuración de arriba es la definitiva.']),
+  '<b>El historial.</b> Este cambio es más profundo que el de GEDA. Al exigir que las empresas estén en un índice grande, salen las compañías pequeñas que protagonizaron la versión anterior. La GEN-Z actual es una estrategia distinta: las cifras de esta página, hasta octubre de 2026, son de la versión anterior y no dicen nada de la nueva. La cartera de noviembre de 2026 es la primera con la regla nueva; su historial empieza ahí y lo publico separado del anterior. Sigue siendo una estrategia muy agresiva, con caídas posibles del 30&nbsp;% o más.']),
  dict(k='CRYPTO', fecha='Noviembre de 2026', t='CRYPTO pasa a ser una cartera permanente: 50 % Bitcoin y 50 % Ethereum', p=[
   '<b>Qué hacía antes.</b> Desde enero de 2023, un 30&nbsp;% en Bitcoin, un 30&nbsp;% en Ethereum y un 40&nbsp;% en tres altcoins elegidas cada mes por momentum dentro de una lista que mantenía yo a mano. Usé más de una lista y el criterio para incluir una moneda no siempre fue el mismo.',
   '<b>Qué he revisado.</b> He sustituido la lista por una regla automática (las 100 criptomonedas de mayor capitalización cada mes) y he comparado el resultado con una cartera solo de Bitcoin y Ethereum, con un criterio fijado antes de ver los números. He probado también ventanas de momentum más cortas (de 2 a 12 meses) y limitar las altcoins a las que se pueden comprar en Revolut X o Coinbase.',
@@ -97,8 +96,6 @@ CAMBIOS = [
   '<b>Fuera el seguimiento diario.</b> Durante unos días hubo una página con la evolución diaria de GEDA. La he quitado: la revisión es mensual y mirar la cartera cada día no ayuda a seguir la regla.']),
  dict(k='WEB', fecha='Noviembre de 2026', t='Fuera el test de riesgo y el simulador', p=[
   'He quitado de la web el test de riesgo, el simulador de mezclas y la guía para combinar estrategias. Eran herramientas que podían leerse como una recomendación a tu medida, y eso no es lo que hago aquí.']),
- dict(k='GEDA', fecha='Octubre de 2026', t='Retiro el histórico simulado de 2016 a 2020', p=[
-  'La web mostraba una simulación de GEDA para 2016–2020. No era válida: usaba la lista europea con su composición actual, así que «compraba» empresas antes de que entraran en los índices. La he retirado. En esta web GEDA solo muestra lo publicado y operado desde enero de 2021.']),
 ]
 
 # ---------- utilidades ----------
@@ -239,8 +236,7 @@ if crypto_vieja():
 
 def enlace_informe(y, m):
     key = f'{y}-{m:02d}'
-    if key not in INF: return '<span class="muted">sin informe</span>'
-    return f'<a href="{esc(INF[key])}">informe</a>' if INF[key] else '<span class="muted">pendiente de enlazar</span>'
+    return f'<a href="{esc(INF[key])}">informe</a>' if INF.get(key) else '<span class="muted">—</span>'
 
 def filas_registro(k, desde=0, hasta=None):
     p = POS[k]; N = len(p['labels']); out = []
@@ -255,7 +251,12 @@ REG_HEAD = '<thead><tr><th>Mes</th><th>Cambio el día 1</th><th class="n">Result
 
 # ---------- plantilla ----------
 SITEMAP = []
-ICONS = '''<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+def huella(f):
+    """Marca de versión del fichero: cambia cuando cambia su contenido, así nadie se queda con la hoja vieja en caché."""
+    import hashlib
+    return hashlib.sha1(open(f, 'rb').read()).hexdigest()[:8]
+VER_CSS, VER_JS = huella('assets/css/site.css'), huella('assets/js/site.js')
+ICONS ='''<svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
 <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
 <symbol id="i-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
@@ -347,8 +348,8 @@ def page(path, title, desc, body, index=True, og='/assets/img/og-tuamigoinversor
 <link rel="apple-touch-icon" href="/assets/img/logo-tai.jpg">
 <link rel="alternate" type="application/rss+xml" title="Tu Amigo Inversor" href="/feed.xml">
 <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css">
-<script defer src="/assets/js/site.js"></script>
+<link rel="stylesheet" href="/assets/css/site.css?v={VER_CSS}">
+<script defer src="/assets/js/site.js?v={VER_JS}"></script>
 </head>
 <body{' class="home"' if home else ''}>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -531,7 +532,7 @@ def tabla_estrategias():
         if e['lab'] != prev:
             prev = e['lab']
             rows += (f'<tr class="grp lan"><th colspan="8" scope="colgroup">{G_MENOS} <small>en fase de lanzamiento · su método acaba de cambiar · <a href="{LAN}">qué significa</a></small></th></tr>' if e['lab']
-                     else '<tr class="grp"><th colspan="8" scope="colgroup">{G_MAS}</th></tr>')
+                     else f'<tr class="grp"><th colspan="8" scope="colgroup">{G_MAS}</th></tr>')
         anual = cpct(t['cagr']) if t['N'] >= 60 else '<span class="muted" style="font-family:var(--f-b)">menos de 5 años</span>'
         rows += (f'<tr class="{"feat" if k == "GEDA" else ""}"><th scope="row" class="st"><a href="{e["url"]}">{sw(k)}{k}</a><small>{e["una"]}</small></th>'
                  f'<td>{risk(e["riesgo"], k)}</td><td>{e["rev"]}</td><td class="n">{t["y0"]}</td><td class="n neg"><b>{pct(t["worst"])}</b></td>'
@@ -670,7 +671,7 @@ def registro():
         secs += f'<section id="{k.lower()}"{" class=\"band\"" if k == "HORIZONTE" else ""}><div class="wrap"><span class="eyebrow">{E[k]["perfil"]} · desde {ST[k]["y0"]}</span><h2>{sw(k)}{k}</h2><p class="sub">{extra.strip() or "Siete posiciones; cada mes puede cambiar una, varias o ninguna."} <a href="{E[k]["url"]}">Ficha de {k}</a>.</p>{det}</div></section>'
     body = f'''<section class="hero"><div class="wrap"><span class="eyebrow">Registro público</span><h1>Cada cambio, mes a mes</h1>
 <p class="lead">Qué entró y qué salió de cada cartera el día 1, y cómo acabó ese mes. El último año está abierto; los anteriores se despliegan.</p>
-<p class="note">Resultados hasta {mes_txt(*ST["GEDA"]["last_ym"])} y carteras hasta {mes_txt(*pos_ym("GEDA"))}. Los suscriptores reciben cada cartera el día 1; la web la recoge a mediados de mes, entre el 10 y el 15. La columna «Informe» enlaza el correo o el PDF de ese mes cuando lo tengo subido; los informes empiezan en julio de 2025. ROCA e IMPULSO no aparecen porque su cartera es fija y solo se rebalancean una o dos veces al año. CRYPTO ya no rota desde {CRYPTO_DESDE}; sus rotaciones anteriores están <a href="/inversion-criptomonedas-crypto/#historial">archivadas en su ficha</a>.</p>
+<p class="note">Resultados hasta {mes_txt(*ST["GEDA"]["last_ym"])} y carteras hasta {mes_txt(*pos_ym("GEDA"))}. Los suscriptores reciben cada cartera el día 1; la web la recoge a mediados de mes, entre el 10 y el 15. La columna «Informe» enlaza el PDF de ese mes cuando está publicado. ROCA e IMPULSO no aparecen porque su cartera es fija y solo se rebalancean una o dos veces al año. CRYPTO ya no rota desde {CRYPTO_DESDE}; sus rotaciones anteriores están <a href="/inversion-criptomonedas-crypto/#historial">archivadas en su ficha</a>.</p>
 <p class="note">El resultado de cada mes es el de las posiciones publicadas valoradas a precio de cierre, en euros. No es el extracto de una cuenta ni incluye comisiones o impuestos.</p>
 <div class="tabs">{tabs}</div></div></section>{secs}{suscripcion()}'''
     page('/registro/', 'Registro de cambios de cada estrategia | Tu Amigo Inversor', 'Todas las entradas y salidas de GEDA, HORIZONTE y GEN-Z, mes a mes, con el resultado de cada mes.', body)
@@ -732,7 +733,7 @@ def informes():
     pend = sum(1 for v in INF.values() if not v)
     body = f'''<section class="hero"><div class="wrap"><span class="eyebrow">Informes publicados</span><h1>Así es lo que llega al correo</h1><p class="lead">Los informes ya enviados, tal cual salieron. Sirven para ver el formato y para comprobar que lo que cuenta el registro se dijo en su día.</p>
 <div class="g3" style="margin-top:30px">{items}</div>
-<p class="note">{f"Quedan {pend} informes anteriores por subir (desde julio de 2025). " if pend else ""}El de cada mes llega a los suscriptores el día 1; aquí lo subo a mediados de mes.</p></div></section>{suscripcion()}'''
+<p class="note">El de cada mes llega a los suscriptores el día 1; aquí lo subo a mediados de mes.</p></div></section>{suscripcion()}'''
     page('/informes/', 'Informes mensuales publicados | Tu Amigo Inversor', 'Los informes mensuales ya enviados, en PDF, para ver el formato y comprobar el registro.', body)
 
 # ---------- blog ----------

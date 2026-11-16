@@ -17,7 +17,14 @@
 
   var subs = document.querySelectorAll('.has-sub');
   subs.forEach(function (li) {
-    var b = li.querySelector('.sub-toggle');
+    var b = li.querySelector('.sub-toggle'), t = null;
+    /* con ratón: se abre al pasar por encima y se cierra con un pequeño retardo al salir */
+    li.addEventListener('mouseenter', function () {
+      clearTimeout(t);
+      subs.forEach(function (x) { if (x !== li) x.classList.remove('hover', 'open'); });
+      li.classList.add('hover');
+    });
+    li.addEventListener('mouseleave', function () { t = setTimeout(function () { li.classList.remove('hover'); }, 350); });
     b.addEventListener('click', function (e) {
       e.stopPropagation();
       var o = !li.classList.contains('open');
