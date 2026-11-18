@@ -14,7 +14,8 @@ QUÉ HA CAMBIADO EN V58 RESPECTO A V57
     En pantallas de menos de 800 px no se enseña (la tarjeta azul ya dice lo mismo).
   + Menú «Cómo funciona» sin duplicados: metodología, cómo elaboro los informes y qué hago el día 1.
   + Botón del menú móvil con texto blanco. Tarjeta de reserva 3:2 para artículos sin imagen.
-  + Nueva entrada en cambios de método: «Las seis estrategias, en tres familias».
+  + (18-nov) Quitada la entrada «Las seis estrategias, en tres familias» de cambios de método y toda mención al filtro
+    de tendencia de CRYPTO. Artículo de la auditoría reescrito, con imagen.
 
 QUÉ HA CAMBIADO EN V57 RESPECTO A V56
   + Aspecto de la v48: tipografías Bricolage Grotesque + IBM Plex, cobalto y naranja, banda azul en la portada,
